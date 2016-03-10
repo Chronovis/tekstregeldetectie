@@ -1,0 +1,35 @@
+# ~/.tmuxinator/hire-forms.yml
+
+name: annefrank
+root: ~/annefrank
+tmux_command: tmux -2
+windows:
+  - npm:
+      layout: even-horizontal
+      panes:
+        - npm start
+        - npm run watch
+  - git:
+      layout: even-horizontal
+      panes:
+        - git st
+  - statics_npm:
+      layout: even-horizontal
+      panes:
+        - npm run watch-src
+      root: ~/annefrank2-statics
+  - statics_git:
+      layout: even-horizontal
+      panes:
+        - git st
+      root: ~/annefrank2-statics
+  - djatoka_npm:
+      layout: even-horizontal
+      panes:
+        - npm start
+      root: ~/hire-djatoka-client
+  - djatoka_git:
+      layout: even-horizontal
+      panes:
+        - git st
+      root: ~/hire-djatoka-client

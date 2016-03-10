@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Tekstregeldetectie</title>
+		<style>
+			canvas {
+				position: absolute;
+				top: 0;
+			}
+
+			canvas#image {
+				left: 100px;
+			}
+
+			canvas#map {
+				width: 100px;
+			}
+
+		</style>
+		<script>
+			document.addEventListener("DOMContentLoaded", () => {
+				const imgCanvas = document.querySelector("body > canvas#image");
+				const mapCanvas = document.querySelector("body > canvas#map");
+				const imgCtx = imgCanvas.getContext("2d");
+				const mapCtx = mapCanvas.getContext("2d");
+
+				const img = new Image();
+				img.src = "rembrandt-bw.png";
+				img.onload = () => {
+					imgCanvas.width = img.naturalWidth;
+					imgCanvas.height = img.naturalHeight;
+					mapCanvas.width = 100;
+					mapCanvas.height = img.naturalHeight;
+					imgCtx.drawImage(img, 0, 0);
+					const imageData = imgCtx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
+					const lineData = imageData.data
+						.reduce((prev, curr, index, array) => {
+							if ((index + 1) % 4 === 0) {
+								const average = (array[index - 3] + array[index - 2] + array[index -1]) / 3;
+								prev.push(average);
+							}
+							return prev;
+						}, [])
+						.reduce((prev, curr, index, array) => {
+							const sumIndex = Math.floor(index/img.naturalWidth);
+
+							if (index === 0) prev[sumIndex] = 0;
+							if ((index + 1) % img.naturalWidth === 0) {
+								prev[sumIndex] = prev[sumIndex] / img.naturalWidth;
+
+								if (sumIndex + 1 !== img.naturalHeight) prev[sumIndex + 1] = 0;
+							} else {
+								prev[sumIndex] += curr;
+							}
+							return prev;
+						}, []);
+
+					lineData.forEach((value, index) => {
+						value = Math.round(value);
+						if (value > 220) value = 255;
+						if (value < 220) value = 120;
+						mapCtx.fillStyle = `rgb(${value}, ${value}, ${value})`;
+						mapCtx.fillRect(0, index, 100, 1);
+					});
+
+					window.lineData = lineData;
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<canvas id="map"></canvas>
+		<canvas id="image"></canvas>
+	</body>
+</html>

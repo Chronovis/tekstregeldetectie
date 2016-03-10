@@ -1,0 +1,16 @@
+dev:
+  entrypoint: "./entrypoint.sh"
+  environment:
+    - SSH_AUTH_SOCK=/ssh-agent
+  image: gijsjan/webdev:1.1
+  ports:
+    - "3000:3000"
+    - "4000:4000"
+  volumes:
+    - ..:/home/developer/annefrank
+    - ../../annefrank2-statics:/home/developer/annefrank2-statics
+    - ../../hire-djatoka-client:/home/developer/hire-djatoka-client
+    - ./tmuxinator.yml:/home/developer/.tmuxinator/annefrank.yml
+    - ./entrypoint.sh:/home/developer/entrypoint.sh
+    - ~/.ssh:/home/developer/.ssh
+    - ${SSH_AUTH_SOCK}:/ssh-agent
